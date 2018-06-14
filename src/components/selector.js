@@ -5,20 +5,54 @@ import 'react-select/dist/react-select.css';
 
 export default class Selector extends Component {
 
+
     constructor(props) {
         super(props);
 
         this.state = {
-            options: props.options,
-            value: Number(props.value),
-            name: 'test'
-        }
-        console.log('selector: ', this.state);
+            options: this.setupOptions(props.value),
+            value: props.value,
+            name: props.name
+        };
     }
 
+    setupOptions(value) {
+        let options;
+
+        if (this.props.options) {
+            options = this.props.options;
+        } else {
+            // default options
+            options = [{
+                value: 0, label: ' >= 0'
+            },{
+                value: 100, label: ' > 100'
+            },{
+                value: 1000, label: ' > 1000'
+            },{
+                value: 10000, label: ' > 10000'
+            },{
+                value: 100000, label: ' > 100000'
+            }];
+        }
+
+        // check if value is valid number
+        const Value = Number(value);
+        if (isNaN(Value)) {return options; }
+
+        // if options doesn't have value, then add it
+        if (!options.some(e => e.value === value)) {
+            options.push({value: value, label: ` > ${value}`});
+        }
+
+        return options;
+    }
+
+
     handleOnChange(value) {
-        this.setState({value});
-        console.log('change: ', this.state);
+        this.setState({value}, () => {
+            this.props.selectOnChange(this.state);
+        });
     }
 
     cleanInput(inputValue) {
@@ -27,10 +61,9 @@ export default class Selector extends Component {
     }
 
     newOptionCreator(e) {
-        const value = Number(e.label);
-        return { label: `> ${value}`, value: value };
+        const value = e.label;
+        return {value: Number(value), label: ` > ${value}`};
     }
-
 
     render() {
         const {options, value} = this.state;
@@ -38,10 +71,10 @@ export default class Selector extends Component {
             <Select.Creatable multi={false}
                               name={this.state.name}
                               options={options}
-                              onChange={(value) => this.handleOnChange(value)}
+                              onChange={({value}) => this.handleOnChange(value)}
                               onInputChange={(inputValue) => this.cleanInput(inputValue)}
                               newOptionCreator={(e) => this.newOptionCreator(e)}
-                              value={value}
+                              value={value || 0}
             />
         )
     }
