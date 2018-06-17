@@ -1,11 +1,11 @@
 export default function () {
   return (
     [
-      {title: 'Harry Potter'},
-      {title: 'War Light'},
-      {title: 'Look Alive'},
-      {title: 'Creative Quest'},
-      {title: 'The Wisdom of Wolves'}
+      {title: 'Harry Potter', page: 42},
+      {title: 'War Light', page: 20},
+      {title: 'Look Alive', page: 33},
+      {title: 'Creative Quest', page: 56},
+      {title: 'The Wisdom of Wolves', page: 18}
     ]
   )
 }
