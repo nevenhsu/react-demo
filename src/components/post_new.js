@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
+import Dropzone from 'react-dropzone'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import TextField from '@material-ui/core/TextField';
 import { createPost, CREATE_POSTS } from '../actions'
 
 class PostsNew extends Component {
@@ -13,7 +15,8 @@ class PostsNew extends Component {
         return (
             <div className={className}>
                 <label>{field.label}</label>
-                <input
+                <TextField
+                  label="text"
                     className="form-control"
                     type="text"
                     {...field.input}
@@ -25,6 +28,28 @@ class PostsNew extends Component {
             </div>
         )
     }
+
+  renderDropzoneInput = (field) => {
+    const files = field.input.value;
+    return (
+      <div>
+        <Dropzone
+          name={field.name}
+          onDrop={( filesToUpload, e ) => field.input.onChange(filesToUpload)}
+        >
+          <div>Try dropping some files here, or click to select files to upload.</div>
+        </Dropzone>
+        {field.meta.touched &&
+        field.meta.error &&
+        <span className="error">{field.meta.error}</span>}
+        {files && Array.isArray(files) && (
+          <ul>
+            { files.map((file, i) => <li key={i}>{file.name}</li>) }
+          </ul>
+        )}
+      </div>
+    );
+  }
 
     onSubmit(values) {
         this.props.createPost(values, () => {
@@ -52,6 +77,8 @@ class PostsNew extends Component {
                     name='content'
                     component={this.renderField}
                 />
+
+              <Field name="logo" component={this.renderDropzoneInput}/>
 
                 <button type="submit" className="btn btn-primary">Submit</button>
                 <Link to="/" className="btn mx-2">Cancel</Link>
